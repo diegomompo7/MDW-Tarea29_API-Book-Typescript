@@ -2,10 +2,7 @@ import express, { type NextFunction, type Response, type Request } from "express
 import bcrypt from "bcrypt";
 import { Author } from "../model/Author.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
-import  { generateToken } from "../utils/token.js";
-import fs from "fs";
-import multer from "multer";
-const upload = multer({ dest: "public" });
+import { generateToken } from "../utils/token.js";
 
 export const authorRouter = express.Router();
 
@@ -39,7 +36,7 @@ authorRouter.get("/", async (req: Request, res: Response, next: NextFunction) =>
       totalItems: totalElements,
       totalPage: Math.ceil(totalElements / limit),
       currentPage: page,
-      date: authors,
+      date: authors
     };
     res.json(response);
   } catch (error) {
@@ -85,7 +82,7 @@ authorRouter.post("/", async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
-authorRouter.delete("/:id", isAuth, async (req: any , res: Response, next: NextFunction) => {
+authorRouter.delete("/:id", isAuth, async (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
 
@@ -115,7 +112,7 @@ authorRouter.put("/:id", isAuth, async (req: any, res: Response, next: NextFunct
     if (authorUpdated) {
       Object.assign(authorUpdated, req.body)
       await authorUpdated.save()
-      const authorToSend: any  = authorUpdated.toObject()
+      const authorToSend: any = authorUpdated.toObject()
       delete authorToSend.password;
       res.json(authorToSend);
     } else {
@@ -142,7 +139,7 @@ authorRouter.post("/login", async (req: Request, res: Response, next: NextFuncti
     const match = await bcrypt.compare(password, author.password);
     if (match) {
       // Quitamos password de la respuesta
-      const authorWithoutPass: any  = author.toObject();
+      const authorWithoutPass: any = author.toObject();
       delete authorWithoutPass.password;
 
       const jwtToken = generateToken(author._id.toString(), author.email);
